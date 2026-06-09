@@ -1,0 +1,5 @@
+node_modules/
+dist/
+docs/*smoke.png
+.DS_Store
+learnpython/
