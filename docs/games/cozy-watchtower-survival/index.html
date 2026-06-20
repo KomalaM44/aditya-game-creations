@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cozy Watchtower Survival</title>
+    <script type="module" crossorigin src="./assets/index-oebPVs0V.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-D72qkkVi.css">
+  </head>
+  <body>
+    <main id="app">
+      <canvas id="game" aria-label="3D cozy watchtower survival game"></canvas>
+      <a class="home-link" href="../../index.html">Home</a>
+      <section id="start-screen" class="overlay">
+        <div class="title-stack">
+          <p class="kicker">Rainy woods survival</p>
+          <h1>Cozy Watchtower Survival</h1>
+          <p class="intro">Chop trees, stack wood blocks into a warm watchtower, place unlimited turrets, and keep the big monster outside.</p>
+          <button id="start-button" type="button">Start Game</button>
+        </div>
+      </section>
+      <section id="game-over" class="overlay hidden">
+        <div class="title-stack">
+          <p id="end-kicker" class="kicker">The tower fell quiet</p>
+          <h2 id="end-title">Game Over</h2>
+          <p id="end-copy" class="intro">The monster reached your cozy base.</p>
+          <button id="restart-button" type="button">Play Again</button>
+        </div>
+      </section>
+      <section class="hud top-left">
+        <strong>Cozy Watchtower</strong>
+        <span>Health <b id="health">100</b></span>
+        <span>Wood <b id="wood">20</b></span>
+        <span>Cakes <b>∞</b></span>
+        <span>Monster <b id="monster">100</b></span>
+      </section>
+      <section class="hud top-right">
+        <button class="tool active" data-tool="axe" type="button" title="Swing axe">Axe</button>
+        <button class="tool" data-tool="wood" type="button" title="Stack wood blocks">Block</button>
+        <button class="tool" data-tool="turret" type="button" title="Place unlimited turrets">Turret <b id="turrets">∞</b></button>
+      </section>
+      <section class="hud bottom-left">
+        <button id="cake-button" type="button">Eat Cake</button>
+        <button id="cocoa-button" type="button">Drink Hot Chocolate</button>
+        <span id="message">WASD move, mouse look, click to use, 1-7 tools.</span>
+      </section>
+      <div id="crosshair" aria-hidden="true"></div>
+    </main>
+  </body>
+</html>

@@ -124,9 +124,9 @@ h2 {
 .game-grid {
   display: grid;
   gap: 18px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   margin: 0 auto;
-  max-width: 1180px;
+  max-width: 1360px;
 }
 
 .game-card {
@@ -321,6 +321,136 @@ h2 {
   width: 26px;
 }
 
+.cozy-card .game-art {
+  background:
+    linear-gradient(180deg, rgba(14, 24, 36, 0.28), rgba(14, 24, 36, 0.4)),
+    linear-gradient(180deg, #26384a 0 58%, #1f4d2c 58% 100%);
+}
+
+.rain {
+  background: repeating-linear-gradient(100deg, transparent 0 15px, rgba(191, 219, 254, 0.84) 16px 18px, transparent 19px 30px);
+  inset: 0;
+  position: absolute;
+}
+
+.rain-two {
+  left: -40px;
+  opacity: 0.48;
+  top: 18px;
+}
+
+.tower {
+  bottom: 46px;
+  height: 126px;
+  left: 50%;
+  position: absolute;
+  transform: translateX(-50%);
+  width: 102px;
+}
+
+.tower::before,
+.tower::after,
+.tower span {
+  background: #8b5a2b;
+  border: 4px solid #4a2a16;
+  border-radius: 6px;
+  content: "";
+  position: absolute;
+}
+
+.tower::before {
+  bottom: 0;
+  height: 58px;
+  left: 16px;
+  width: 70px;
+}
+
+.tower::after {
+  bottom: 56px;
+  height: 58px;
+  left: 4px;
+  width: 94px;
+}
+
+.tower span {
+  background: #3f260f;
+  bottom: 105px;
+  height: 20px;
+  left: -4px;
+  width: 110px;
+}
+
+.warm-window {
+  background: #facc15;
+  border: 3px solid #4a2a16;
+  border-radius: 6px;
+  bottom: 126px;
+  box-shadow: 0 0 28px rgba(250, 204, 21, 0.86);
+  height: 28px;
+  left: calc(50% - 14px);
+  position: absolute;
+  width: 28px;
+}
+
+.tree {
+  background: #4a2a16;
+  border-radius: 4px;
+  bottom: 44px;
+  height: 82px;
+  position: absolute;
+  width: 18px;
+}
+
+.tree::before {
+  background: #14532d;
+  border-radius: 999px 999px 18px 18px;
+  content: "";
+  height: 94px;
+  left: 50%;
+  position: absolute;
+  top: -72px;
+  transform: translateX(-50%);
+  width: 72px;
+}
+
+.tree-one {
+  left: 36px;
+}
+
+.tree-two {
+  right: 42px;
+  transform: scale(0.82);
+}
+
+.big-monster {
+  background: #111827;
+  border-radius: 999px 999px 16px 16px;
+  bottom: 46px;
+  height: 92px;
+  position: absolute;
+  right: 18px;
+  width: 72px;
+}
+
+.big-monster::before,
+.big-monster::after {
+  background: #ef4444;
+  border-radius: 999px;
+  content: "";
+  height: 9px;
+  position: absolute;
+  top: 28px;
+  width: 9px;
+}
+
+.big-monster::before {
+  left: 20px;
+}
+
+.big-monster::after {
+  right: 20px;
+}
+
 .game-info {
   display: grid;
   gap: 12px;
@@ -376,6 +506,12 @@ h2 {
   .game-card {
     grid-template-rows: 220px 1fr;
     min-height: 420px;
+  }
+}
+
+@media (min-width: 821px) and (max-width: 1120px) {
+  .game-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

@@ -6,10 +6,11 @@
     "games/*"
   ],
   "scripts": {
-    "build": "npm run build --workspace aditya-base-survival && npm run build --workspace build-your-space-shuttle",
+    "build": "npm run build --workspace aditya-base-survival && npm run build --workspace build-your-space-shuttle && npm run build --workspace cozy-watchtower-survival",
     "preview:site": "vite docs --host 127.0.0.1",
     "dev:base": "npm run dev --workspace aditya-base-survival",
-    "dev:shuttle": "npm run dev --workspace build-your-space-shuttle"
+    "dev:shuttle": "npm run dev --workspace build-your-space-shuttle",
+    "dev:cozy": "npm run dev --workspace cozy-watchtower-survival"
   },
   "dependencies": {
     "three": "^0.177.0"
