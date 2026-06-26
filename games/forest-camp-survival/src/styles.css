@@ -172,14 +172,33 @@ h2 {
   z-index: 4;
 }
 
-.inventory div {
+.inventory div,
+.inventory-item {
   align-items: center;
+  background: transparent;
+  color: #f8fafc;
   display: flex;
   justify-content: space-between;
   gap: 12px;
+  min-height: 30px;
+  padding: 4px 6px;
+  text-align: left;
+  width: 100%;
 }
 
-.inventory strong {
+.inventory-item {
+  border: 1px solid transparent;
+  font-weight: 700;
+}
+
+.inventory-item:hover,
+.inventory-item.selected {
+  background: rgba(250, 204, 21, 0.14);
+  border-color: rgba(250, 204, 21, 0.5);
+}
+
+.inventory strong,
+.inventory-item strong {
   color: #fef08a;
 }
 

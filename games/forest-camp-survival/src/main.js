@@ -47,6 +47,7 @@ const player = {
   yaw: 0,
   pitch: -0.12,
   velocityY: 0,
+  grounded: true,
   health: 100,
   className: "Starter",
   weapon: "spear",
@@ -68,6 +69,8 @@ const state = {
   adminOpen: false,
   heldStructure: null,
   gameEnded: false,
+  fireStarted: false,
+  selectedInventoryItem: null,
 };
 
 const inventory = {
@@ -295,6 +298,8 @@ function setupLobby() {
   scene.add(ground);
 
   player.position.set(0, 1.72, 14);
+  player.velocityY = 0;
+  player.grounded = true;
   player.yaw = Math.PI;
   player.pitch = -0.08;
   state.phase = "lobby";
@@ -395,10 +400,13 @@ function setupForest(mode) {
 
   state.phase = "forest";
   state.mode = mode === "hard" ? "Hardmode" : "Normal";
-  state.fuel = mode === "hard" ? 24 : 38;
+  state.fuel = 0;
+  state.fireStarted = false;
   state.dayTime = 0;
   state.gameEnded = false;
   player.position.set(0, 1.72, 9);
+  player.velocityY = 0;
+  player.grounded = true;
   player.yaw = Math.PI;
   player.pitch = -0.12;
   player.health = 100;
@@ -425,12 +433,13 @@ function setupForest(mode) {
   createCampfire();
   createGrinder();
   createAdminPanelObject();
+  createStartingStructures();
   createForest();
   createChests();
   createLootField();
   createAnimals(mode);
   addPlayerDummy();
-  showMessage("Forest spawned. Chop trees with the old axe, collect loot in the old sack, and feed the campfire.");
+  showMessage("Forest spawned. The campfire has no fuel. Chop trees, collect fuel, and build up the camp.");
   updateHud();
 }
 
@@ -456,6 +465,7 @@ function createCampfire() {
   }
   const flame = new THREE.Mesh(new THREE.ConeGeometry(0.55, 1.2, 18), materials.fire);
   flame.position.y = 0.9;
+  flame.scale.setScalar(0.08);
   flame.userData.flame = true;
   group.add(flame);
   const light = new THREE.PointLight(0xff7a18, 4.8, 22, 1.6);
@@ -465,6 +475,98 @@ function createCampfire() {
   scene.add(group);
   campfire = group;
   interactables.push(group);
+}
+
+function createStartingStructures() {
+  createWoodShelter(new THREE.Vector3(-4.4, 0, -4.6));
+  createBarricade(new THREE.Vector3(3.7, 0, -5.2), -0.28);
+  createWatchPost(new THREE.Vector3(-7.2, 0, 2.4));
+  createStorageCrate(new THREE.Vector3(2.7, 0, 4.3));
+}
+
+function createWoodShelter(position) {
+  const group = new THREE.Group();
+  group.position.copy(position);
+  const floor = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.24, 3.2), materials.wood);
+  floor.position.y = 0.12;
+  const backWall = new THREE.Mesh(new THREE.BoxGeometry(3.8, 2.2, 0.22), materials.wood);
+  backWall.position.set(0, 1.2, -1.5);
+  const leftWall = new THREE.Mesh(new THREE.BoxGeometry(0.22, 2.2, 3.2), materials.wood);
+  leftWall.position.set(-1.9, 1.2, 0);
+  const rightWall = new THREE.Mesh(new THREE.BoxGeometry(0.22, 2.2, 3.2), materials.wood);
+  rightWall.position.set(1.9, 1.2, 0);
+  const roof = new THREE.Mesh(new THREE.ConeGeometry(3.0, 1.2, 4), materials.bark);
+  roof.position.y = 2.8;
+  roof.rotation.y = Math.PI / 4;
+  [floor, backWall, leftWall, rightWall, roof].forEach((part) => {
+    part.castShadow = true;
+    part.receiveShadow = true;
+    group.add(part);
+  });
+  group.userData = { interact: "structure", movable: true, cooldown: 0, label: "Wood shelter: find the hammer to move this structure." };
+  scene.add(group);
+  structures.push(group);
+  interactables.push(group);
+}
+
+function createBarricade(position, rotation = 0) {
+  const group = new THREE.Group();
+  group.position.copy(position);
+  group.rotation.y = rotation;
+  for (let i = 0; i < 4; i += 1) {
+    const log = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.18, 3.4, 10), materials.bark);
+    log.position.set(0, 0.45 + i * 0.32, 0);
+    log.rotation.z = Math.PI / 2;
+    log.castShadow = true;
+    log.receiveShadow = true;
+    group.add(log);
+  }
+  [-1.35, 1.35].forEach((x) => {
+    const post = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.2, 1.8, 10), materials.bark);
+    post.position.set(x, 0.85, 0);
+    post.castShadow = true;
+    group.add(post);
+  });
+  group.userData = { interact: "structure", movable: true, cooldown: 0, label: "Log barricade: hammer can move it around the camp." };
+  scene.add(group);
+  structures.push(group);
+  interactables.push(group);
+}
+
+function createWatchPost(position) {
+  const group = new THREE.Group();
+  group.position.copy(position);
+  [-0.8, 0.8].forEach((x) => {
+    [-0.8, 0.8].forEach((z) => {
+      const post = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.15, 3.4, 8), materials.bark);
+      post.position.set(x, 1.7, z);
+      post.castShadow = true;
+      group.add(post);
+    });
+  });
+  const deck = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.22, 2.2), materials.wood);
+  deck.position.y = 3.05;
+  deck.castShadow = true;
+  deck.receiveShadow = true;
+  const rail = new THREE.Mesh(new THREE.TorusGeometry(1.2, 0.055, 8, 4), materials.bark);
+  rail.position.y = 3.42;
+  rail.rotation.y = Math.PI / 4;
+  group.add(deck, rail);
+  group.userData = { interact: "structure", movable: true, cooldown: 0, label: "Watch post: a movable structure for scouting the forest." };
+  scene.add(group);
+  structures.push(group);
+  interactables.push(group);
+}
+
+function createStorageCrate(position) {
+  const crate = addBox(new THREE.Vector3(1.8, 1.2, 1.4), new THREE.Vector3(position.x, 0.6, position.z), materials.wood, {
+    interact: "structure",
+    movable: true,
+    cooldown: 0,
+    label: "Storage crate: hammer can move this structure.",
+  });
+  structures.push(crate);
+  interactables.push(crate);
 }
 
 function createGrinder() {
@@ -496,14 +598,18 @@ function createAdminPanelObject() {
 function createTree(x, z, scale = 1) {
   const group = new THREE.Group();
   group.position.set(x, 0, z);
-  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.28 * scale, 0.42 * scale, 3.2 * scale, 10), materials.bark);
+  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.22 * scale, 0.38 * scale, 3.8 * scale, 12), materials.bark);
   trunk.position.y = 1.6 * scale;
   trunk.castShadow = true;
   group.add(trunk);
-  const leaves = new THREE.Mesh(new THREE.ConeGeometry(1.5 * scale, 3.3 * scale, 12), materials.leaves);
-  leaves.position.y = 4 * scale;
+  const leaves = new THREE.Mesh(new THREE.ConeGeometry(1.35 * scale, 3.6 * scale, 14), materials.leaves);
+  leaves.position.y = 4.15 * scale;
   leaves.castShadow = true;
   group.add(leaves);
+  const lowerLeaves = new THREE.Mesh(new THREE.ConeGeometry(1.65 * scale, 2.8 * scale, 14), materials.leaves);
+  lowerLeaves.position.y = 3.25 * scale;
+  lowerLeaves.castShadow = true;
+  group.add(lowerLeaves);
   group.userData = { interact: "tree", hp: 3, label: "Tree: old axe takes 3 hits. Strong and admin axes one-shot it." };
   scene.add(group);
   trees.push(group);
@@ -511,10 +617,10 @@ function createTree(x, z, scale = 1) {
 }
 
 function createForest() {
-  for (let i = 0; i < 52; i += 1) {
+  for (let i = 0; i < 72; i += 1) {
     const angle = Math.random() * Math.PI * 2;
-    const radius = 14 + Math.random() * 54;
-    createTree(Math.cos(angle) * radius, Math.sin(angle) * radius, 0.75 + Math.random() * 0.65);
+    const radius = 18 + Math.random() * 52;
+    createTree(Math.cos(angle) * radius, Math.sin(angle) * radius, 0.85 + Math.random() * 0.55);
   }
 }
 
@@ -538,7 +644,7 @@ function createChests() {
 
 function createLootField() {
   const pool = ["coal", "bolt", "metalSheet", "oldRadio", "oldFan", "brokenMicrowave", "metalChair", "woodenChair", "brokenDishwasher", "fuelCanister", "oilBarrel", "cultistExperiment"];
-  for (let i = 0; i < 32; i += 1) {
+  for (let i = 0; i < 20; i += 1) {
     const angle = Math.random() * Math.PI * 2;
     const radius = 8 + Math.random() * 48;
     const type = pool[Math.floor(Math.random() * pool.length)];
@@ -560,17 +666,64 @@ function spawnItem(type, position) {
   return mesh;
 }
 
+function createPlacedItem(type, position) {
+  const info = itemInfo[type] ?? itemInfo.wood;
+  let mesh;
+  if (type === "wood") {
+    mesh = new THREE.Group();
+    for (let i = 0; i < 3; i += 1) {
+      const log = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.15, 1.25, 10), materials.bark);
+      log.position.set((i - 1) * 0.18, 0.18 + i * 0.1, 0);
+      log.rotation.z = Math.PI / 2;
+      log.rotation.y = i * 0.7;
+      log.castShadow = true;
+      mesh.add(log);
+    }
+  } else if (type === "coal") {
+    mesh = new THREE.Mesh(new THREE.DodecahedronGeometry(0.42, 0), materials.coal);
+  } else if (type === "oilBarrel" || type === "fuelCanister") {
+    mesh = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.38, type === "oilBarrel" ? 1.05 : 0.72, 18), new THREE.MeshStandardMaterial({ color: info.color, roughness: 0.42, metalness: 0.18 }));
+    mesh.rotation.x = Math.PI / 2;
+  } else {
+    mesh = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.52, 0.72), new THREE.MeshStandardMaterial({ color: info.color, roughness: 0.5, metalness: info.scrap ? 0.3 : 0.05 }));
+  }
+  mesh.position.copy(position);
+  mesh.position.y = type === "wood" ? 0.05 : 0.38;
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  mesh.userData = {
+    interact: "placedItem",
+    itemType: type,
+    label: `${info.label}: placed from your sack. Click to pick it back up.`,
+  };
+  scene.add(mesh);
+  structures.push(mesh);
+  interactables.push(mesh);
+  return mesh;
+}
+
 function createAnimal(type, x, z) {
   const stats = animalStats[type];
   const group = new THREE.Group();
   group.position.set(x, 0, z);
-  const body = new THREE.Mesh(new THREE.BoxGeometry(stats.size * 1.5, stats.size, stats.size * 0.8), new THREE.MeshStandardMaterial({ color: stats.color, roughness: 0.72 }));
+  const body = new THREE.Mesh(new THREE.BoxGeometry(stats.size * 1.65, stats.size * 0.78, stats.size * 0.72), new THREE.MeshStandardMaterial({ color: stats.color, roughness: 0.82 }));
   body.position.y = stats.size * 0.6;
   body.castShadow = true;
-  const head = new THREE.Mesh(new THREE.BoxGeometry(stats.size * 0.65, stats.size * 0.65, stats.size * 0.65), new THREE.MeshStandardMaterial({ color: stats.color, roughness: 0.72 }));
-  head.position.set(0, stats.size * 0.8, -stats.size * 0.62);
+  const head = new THREE.Mesh(new THREE.BoxGeometry(stats.size * 0.55, stats.size * 0.52, stats.size * 0.58), new THREE.MeshStandardMaterial({ color: stats.color, roughness: 0.82 }));
+  head.position.set(0, stats.size * 0.72, -stats.size * 0.72);
   head.castShadow = true;
-  group.add(body, head);
+  const nose = new THREE.Mesh(new THREE.BoxGeometry(stats.size * 0.28, stats.size * 0.18, stats.size * 0.22), materials.coal);
+  nose.position.set(0, stats.size * 0.68, -stats.size * 1.08);
+  const legGeometry = new THREE.BoxGeometry(stats.size * 0.18, stats.size * 0.55, stats.size * 0.18);
+  [-0.46, 0.46].forEach((x) => {
+    [-0.24, 0.24].forEach((z) => {
+      const leg = new THREE.Mesh(legGeometry, new THREE.MeshStandardMaterial({ color: stats.color, roughness: 0.85 }));
+      leg.position.set(x * stats.size, stats.size * 0.25, z * stats.size);
+      leg.castShadow = true;
+      group.add(leg);
+    });
+  });
+  group.add(body, head, nose);
   group.userData = {
     interact: "animal",
     animalType: type,
@@ -587,11 +740,11 @@ function createAnimal(type, x, z) {
 
 function createAnimals(mode) {
   const hard = mode === "hard";
-  const count = hard ? 24 : 15;
-  const types = hard ? ["wolf", "wolf", "alphaWolf", "bear", "bunny"] : ["bunny", "bunny", "wolf", "wolf", "alphaWolf", "bear"];
+  const count = hard ? 9 : 5;
+  const types = hard ? ["wolf", "wolf", "alphaWolf", "bear", "bunny"] : ["bunny", "bunny", "wolf", "wolf", "alphaWolf"];
   for (let i = 0; i < count; i += 1) {
     const angle = Math.random() * Math.PI * 2;
-    const radius = 18 + Math.random() * 48;
+    const radius = 32 + Math.random() * 34;
     createAnimal(types[Math.floor(Math.random() * types.length)], Math.cos(angle) * radius, Math.sin(angle) * radius);
   }
 }
@@ -665,6 +818,35 @@ function collectItem(mesh) {
   showMessage(`Collected ${itemInfo[type].label}.`);
 }
 
+function selectInventoryItem(type) {
+  if (!inventory[type]) return;
+  state.selectedInventoryItem = state.selectedInventoryItem === type ? null : type;
+  showMessage(state.selectedInventoryItem ? `${itemInfo[type].label} selected. Look at the ground and press P to place it.` : "Inventory item deselected.");
+  updateHud();
+}
+
+function placeSelectedInventoryItem() {
+  const type = state.selectedInventoryItem;
+  if (!type || !inventory[type]) {
+    showMessage("Click an item in the inventory first, then press P to place it.");
+    return;
+  }
+  if (itemInfo[type]?.weapon || itemInfo[type]?.axe || itemInfo[type]?.armor || itemInfo[type]?.hammer || type === "ammo" || type === "medkit") {
+    showMessage(`${itemInfo[type].label} stays equipped instead of being placed.`);
+    return;
+  }
+  const point = raycastGround() ?? player.position.clone().add(new THREE.Vector3(-Math.sin(player.yaw), 0, -Math.cos(player.yaw)).multiplyScalar(3.2)).setY(0);
+  if (point.distanceTo(player.position) > 8) {
+    showMessage("That spot is too far away.");
+    return;
+  }
+  createPlacedItem(type, point);
+  inventory[type] -= 1;
+  if (inventory[type] <= 0) state.selectedInventoryItem = null;
+  showMessage(`Placed ${itemInfo[type].label}. Click it with the sack to pick it back up.`);
+  updateHud();
+}
+
 function addFuel() {
   const order = ["oilBarrel", "fuelCanister", "coal", "wood"];
   const type = order.find((entry) => inventory[entry] > 0);
@@ -674,6 +856,7 @@ function addFuel() {
   }
   inventory[type] -= 1;
   state.fuel += itemInfo[type].fuel;
+  state.fireStarted = true;
   showMessage(`Added ${itemInfo[type].label} to the campfire.`);
   updateHud();
 }
@@ -815,6 +998,8 @@ function interact(target) {
     chopTree(target);
   } else if (data.interact === "item") {
     collectItem(target);
+  } else if (data.interact === "placedItem") {
+    collectItem(target);
   } else if (data.interact === "campfire") {
     addFuel();
   } else if (data.interact === "grinder") {
@@ -858,6 +1043,15 @@ function updateMovement(dt) {
     move.normalize().multiplyScalar(speed * dt);
     player.position.add(move);
   }
+  player.velocityY -= 24 * dt;
+  player.position.y += player.velocityY * dt;
+  if (player.position.y <= 1.72) {
+    player.position.y = 1.72;
+    player.velocityY = 0;
+    player.grounded = true;
+  } else {
+    player.grounded = false;
+  }
   player.position.x = THREE.MathUtils.clamp(player.position.x, -72, 72);
   player.position.z = THREE.MathUtils.clamp(player.position.z, -72, 72);
   camera.position.copy(player.position);
@@ -881,16 +1075,18 @@ function updateLobby() {
 
 function updateForest(dt) {
   state.dayTime += dt;
-  state.fuel -= dt * (state.mode === "Hardmode" ? 0.55 : 0.34);
+  if (state.fireStarted) {
+    state.fuel -= dt * (state.mode === "Hardmode" ? 0.55 : 0.34);
+  }
   if (campfire) {
     const flame = campfire.children.find((child) => child.userData.flame);
     if (flame) {
-      const scale = THREE.MathUtils.clamp(state.fuel / 40, 0.08, 1.35);
+      const scale = state.fireStarted ? THREE.MathUtils.clamp(state.fuel / 40, 0.08, 1.35) : 0.08;
       flame.scale.setScalar(scale);
       flame.rotation.y += dt * 4;
     }
   }
-  if (state.fuel <= 0 && !state.gameEnded) {
+  if (state.fireStarted && state.fuel <= 0 && !state.gameEnded) {
     endGame("The campfire went out", "Collect fuel faster or grind junk before the night eats the flame.");
   }
 
@@ -899,7 +1095,8 @@ function updateForest(dt) {
     data.attackTimer -= dt;
     const toPlayer = player.position.clone().sub(animal.position);
     const distance = toPlayer.length();
-    if (data.damage > 0 && distance < 24) {
+    const aggroRange = state.mode === "Hardmode" ? 20 : 15;
+    if (data.damage > 0 && distance < aggroRange) {
       toPlayer.y = 0;
       if (toPlayer.lengthSq() > 0.001) animal.position.add(toPlayer.normalize().multiplyScalar(data.speed * dt));
       animal.lookAt(player.position.x, animal.position.y, player.position.z);
@@ -951,7 +1148,12 @@ function updateHud() {
   toolButtons.forEach((button) => button.classList.toggle("active", button.dataset.tool === player.tool));
   const visible = Object.entries(inventory).filter(([, amount]) => amount > 0);
   inventoryEl.innerHTML = visible.length
-    ? visible.map(([key, amount]) => `<div><span>${itemInfo[key]?.label ?? key}</span><strong>${amount}</strong></div>`).join("")
+    ? visible
+        .map(
+          ([key, amount]) =>
+            `<button class="inventory-item ${state.selectedInventoryItem === key ? "selected" : ""}" data-item="${key}"><span>${itemInfo[key]?.label ?? key}</span><strong>${amount}</strong></button>`,
+        )
+        .join("")
     : "<div><span>Old Sack</span><strong>empty</strong></div>";
 }
 
@@ -975,6 +1177,11 @@ function removeFrom(array, item) {
   if (index >= 0) array.splice(index, 1);
 }
 
+function lockPointer() {
+  const request = canvas.requestPointerLock?.();
+  if (request?.catch) request.catch(() => {});
+}
+
 function animate() {
   const dt = Math.min(clock.getDelta(), 0.04);
   if (state.phase !== "start" && state.phase !== "ended") {
@@ -995,13 +1202,13 @@ function startGame() {
   inventoryEl.classList.remove("hidden");
   toolbar.classList.remove("hidden");
   setupLobby();
-  canvas.requestPointerLock?.();
+  lockPointer();
 }
 
 function chooseMode(mode) {
   modeScreen.classList.add("hidden");
   setupForest(mode);
-  canvas.requestPointerLock?.();
+  lockPointer();
 }
 
 function restart() {
@@ -1009,17 +1216,27 @@ function restart() {
   adminPanel.classList.add("hidden");
   state.gameEnded = false;
   setupLobby();
-  canvas.requestPointerLock?.();
+  lockPointer();
 }
 
 startButton.addEventListener("click", startGame);
 restartButton.addEventListener("click", restart);
 modeButtons.forEach((button) => button.addEventListener("click", () => chooseMode(button.dataset.mode)));
 randomItemButton.addEventListener("click", spawnRandomAdminItem);
+inventoryEl.addEventListener("click", (event) => {
+  const button = event.target.closest(".inventory-item");
+  if (!button) return;
+  selectInventoryItem(button.dataset.item);
+});
 canvas.addEventListener("click", () => {
   if (state.phase === "start" || state.phase === "ended") return;
-  canvas.requestPointerLock?.();
-  interact(getLookTarget());
+  lockPointer();
+  const target = getLookTarget();
+  if (!target && state.selectedInventoryItem) {
+    placeSelectedInventoryItem();
+    return;
+  }
+  interact(target);
 });
 
 window.addEventListener("keydown", (event) => {
@@ -1028,7 +1245,12 @@ window.addEventListener("keydown", (event) => {
   if (event.code === "Digit2") player.tool = "sack";
   if (event.code === "Digit3") player.tool = "weapon";
   if (event.code === "Digit4") player.tool = "hammer";
+  if (event.code === "Space" && player.grounded) {
+    player.velocityY = 8.2;
+    player.grounded = false;
+  }
   if (event.code === "KeyL") useLaserTablet();
+  if (event.code === "KeyP") placeSelectedInventoryItem();
   if (event.code === "KeyE") interact(getLookTarget());
   updateHud();
 });
