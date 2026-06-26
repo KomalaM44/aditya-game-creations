@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Obby 123</title>
+    <script type="module" crossorigin src="./assets/index-Da_nmq_D.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-Dhy4kwL0.css">
+  </head>
+  <body>
+    <main id="app">
+      <canvas id="game" aria-label="3D Obby 123 platform game"></canvas>
+      <a class="home-link" href="../../index.html">Home</a>
+      <section class="hud top-left">
+        <strong>Obby 123</strong>
+        <span>Coins <b id="coins">0</b></span>
+        <span>Checkpoint <b id="checkpoint">0</b></span>
+        <span>Speed Coil <b id="speed-status">Off</b></span>
+        <span>Super Jump <b id="jump-status">Off</b></span>
+      </section>
+      <section class="hud shop">
+        <button id="speed-coil" type="button">Buy Speed Coil · 8</button>
+        <button id="jump-coil" type="button">Buy Super Jump Coil · 12</button>
+      </section>
+      <section id="start-screen" class="overlay">
+        <div class="title-stack">
+          <p class="kicker">3D checkpoint obby</p>
+          <h1>Obby 123</h1>
+          <p>Jump platform to platform, dodge spikes and straight lasers, pass checkpoints, earn coins, and buy coils.</p>
+          <button id="start-button" type="button">Start Obby</button>
+        </div>
+      </section>
+      <section id="win-screen" class="overlay hidden">
+        <div class="title-stack">
+          <p class="kicker">Course complete</p>
+          <h2>You Beat Obby 123</h2>
+          <p id="win-copy">All checkpoints cleared.</p>
+          <button id="again-button" type="button">Play Again</button>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
