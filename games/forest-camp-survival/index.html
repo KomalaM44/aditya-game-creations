@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Forest Camp Survival</title>
+  </head>
+  <body>
+    <canvas id="game"></canvas>
+
+    <div id="start-screen" class="overlay">
+      <div class="panel start-panel">
+        <p class="kicker">Lobby survival</p>
+        <h1>Forest Camp Survival</h1>
+        <p>Pick a free class, step into a yellow area, choose normal or hardmode, then keep the campfire alive.</p>
+        <button id="start-button">Enter Lobby</button>
+      </div>
+    </div>
+
+    <div id="mode-screen" class="overlay hidden">
+      <div class="panel mode-panel">
+        <p class="kicker">Yellow area selected</p>
+        <h2>Choose Mode</h2>
+        <div class="mode-actions">
+          <button class="mode-button" data-mode="normal">Normal Mode</button>
+          <button class="mode-button hard" data-mode="hard">Hardmode</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="game-over" class="overlay hidden">
+      <div class="panel">
+        <p id="end-kicker" class="kicker">Run ended</p>
+        <h2 id="end-title">The campfire went out</h2>
+        <p id="end-copy">Return to the lobby and try a different class or mode.</p>
+        <button id="restart-button">Restart</button>
+      </div>
+    </div>
+
+    <div id="hud" class="hud hidden">
+      <div class="stat-row">
+        <span>Mode <strong id="mode">Lobby</strong></span>
+        <span>Class <strong id="class-name">Starter</strong></span>
+        <span>Health <strong id="health">100</strong></span>
+        <span>Fuel <strong id="fuel">0</strong></span>
+        <span>Scrap <strong id="scrap">0</strong></span>
+        <span>Sack <strong id="sack">0/10</strong></span>
+      </div>
+      <div id="message" class="message">Walk to the class shop or a yellow area.</div>
+    </div>
+
+    <div id="inventory" class="inventory hidden"></div>
+
+    <div id="admin-panel" class="admin-panel hidden">
+      <button id="random-item-button">Spawn Random Item</button>
+    </div>
+
+    <div class="toolbar hidden" id="toolbar">
+      <button class="tool active" data-tool="axe">1 Axe</button>
+      <button class="tool" data-tool="sack">2 Sack</button>
+      <button class="tool" data-tool="weapon">3 Weapon</button>
+      <button class="tool" data-tool="hammer">4 Hammer</button>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
