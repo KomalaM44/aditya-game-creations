@@ -21,8 +21,8 @@ const endCopy = document.querySelector("#end-copy");
 const slotButtons = [...document.querySelectorAll(".slot")];
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x050812);
-scene.fog = new THREE.FogExp2(0x07111f, 0.018);
+scene.background = new THREE.Color(0x10233b);
+scene.fog = new THREE.FogExp2(0x17324d, 0.01);
 
 const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 220);
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
@@ -31,7 +31,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 0.92;
+renderer.toneMappingExposure = 1.55;
 
 const clock = new THREE.Clock();
 const raycaster = new THREE.Raycaster();
@@ -108,14 +108,14 @@ function makeTexture(base, fleck, size = 128, flecks = 800) {
 }
 
 function initMaterials() {
-  const metal = makeTexture("#283141", "#9ca3af", 128, 900);
+  const metal = makeTexture("#46576f", "#cbd5e1", 128, 900);
   metal.repeat.set(8, 8);
-  const floor = makeTexture("#111827", "#64748b", 128, 950);
+  const floor = makeTexture("#263548", "#94a3b8", 128, 950);
   floor.repeat.set(10, 10);
-  materials.wall = new THREE.MeshStandardMaterial({ color: 0x334155, map: metal, metalness: 0.68, roughness: 0.24 });
-  materials.floor = new THREE.MeshStandardMaterial({ color: 0x18202d, map: floor, metalness: 0.35, roughness: 0.42 });
-  materials.dark = new THREE.MeshStandardMaterial({ color: 0x050812, metalness: 0.45, roughness: 0.34 });
-  materials.glass = new THREE.MeshPhysicalMaterial({ color: 0x7dd3fc, transmission: 0.18, thickness: 0.4, transparent: true, opacity: 0.42, roughness: 0.05 });
+  materials.wall = new THREE.MeshStandardMaterial({ color: 0x8290a5, map: metal, metalness: 0.45, roughness: 0.34, emissive: 0x111827, emissiveIntensity: 0.22 });
+  materials.floor = new THREE.MeshStandardMaterial({ color: 0x53657d, map: floor, metalness: 0.22, roughness: 0.48, emissive: 0x0f172a, emissiveIntensity: 0.18 });
+  materials.dark = new THREE.MeshStandardMaterial({ color: 0x263244, metalness: 0.35, roughness: 0.38 });
+  materials.glass = new THREE.MeshPhysicalMaterial({ color: 0xa5f3fc, transmission: 0.12, thickness: 0.4, transparent: true, opacity: 0.58, roughness: 0.05 });
   materials.blueChest = new THREE.MeshStandardMaterial({ color: 0x0ea5e9, emissive: 0x052b52, metalness: 0.48, roughness: 0.22 });
   materials.redChest = new THREE.MeshStandardMaterial({ color: 0xdc2626, emissive: 0x450a0a, metalness: 0.55, roughness: 0.18 });
   materials.armor = new THREE.MeshStandardMaterial({ color: 0x3b82f6, metalness: 0.72, roughness: 0.2 });
@@ -137,9 +137,9 @@ function clearScene() {
 }
 
 function addLights() {
-  const ambient = new THREE.HemisphereLight(0x7dd3fc, 0x020617, 0.52);
+  const ambient = new THREE.HemisphereLight(0xdbeafe, 0x334155, 1.25);
   scene.add(ambient);
-  const main = new THREE.DirectionalLight(0xdbeafe, 1.8);
+  const main = new THREE.DirectionalLight(0xffffff, 2.4);
   main.position.set(-12, 18, 9);
   main.castShadow = true;
   main.shadow.mapSize.set(2048, 2048);
@@ -148,6 +148,9 @@ function addLights() {
   main.shadow.camera.top = 34;
   main.shadow.camera.bottom = -34;
   scene.add(main);
+  const fill = new THREE.DirectionalLight(0x93c5fd, 1.15);
+  fill.position.set(14, 10, -12);
+  scene.add(fill);
 }
 
 function addBox(size, position, material, userData = {}) {
@@ -196,6 +199,9 @@ function setupRoom(roomNumber = 1) {
   const width = 28 + roomNumber * 2;
   const depth = 30 + roomNumber * 3;
   const height = 9;
+  const roomGlow = new THREE.PointLight(0xdbeafe, 3.8, Math.max(width, depth) * 1.2, 1.15);
+  roomGlow.position.set(0, 5.8, 0);
+  scene.add(roomGlow);
   const floor = addBox(new THREE.Vector3(width, 0.4, depth), new THREE.Vector3(0, -0.2, 0), materials.floor, { kind: "ground" });
   const ceiling = addBox(new THREE.Vector3(width, 0.4, depth), new THREE.Vector3(0, height, 0), materials.wall);
   const back = addBox(new THREE.Vector3(width, height, 0.55), new THREE.Vector3(0, height / 2, -depth / 2), materials.wall);
@@ -204,14 +210,25 @@ function setupRoom(roomNumber = 1) {
   const right = addBox(new THREE.Vector3(0.55, height, depth), new THREE.Vector3(width / 2, height / 2, 0), materials.wall);
   roomMeshes.push(floor, ceiling, back, front, left, right);
 
-  for (let i = 0; i < 5; i += 1) {
-    const x = -width / 2 + 4 + i * ((width - 8) / 4);
-    const light = new THREE.PointLight(i % 2 ? 0x22d3ee : 0xa78bfa, 2.6, 14, 1.7);
+  for (let i = 0; i < 7; i += 1) {
+    const x = -width / 2 + 4 + i * ((width - 8) / 6);
+    const light = new THREE.PointLight(i % 2 ? 0xa5f3fc : 0xc4b5fd, 4.8, 22, 1.45);
     light.position.set(x, 7.6, -depth / 2 + 2.4);
     scene.add(light);
-    const panel = addBox(new THREE.Vector3(2.4, 0.08, 0.7), new THREE.Vector3(x, 8.78, -depth / 2 + 2.4), materials.glass);
+    const panel = addBox(new THREE.Vector3(3.2, 0.08, 0.9), new THREE.Vector3(x, 8.78, -depth / 2 + 2.4), materials.glass);
     panel.rotation.x = Math.PI / 2;
   }
+
+  [-1, 1].forEach((side) => {
+    for (let i = 0; i < 4; i += 1) {
+      const z = -depth / 2 + 6 + i * ((depth - 12) / 3);
+      const wallLight = new THREE.PointLight(0x93c5fd, 2.1, 16, 1.7);
+      wallLight.position.set(side * (width / 2 - 0.8), 3.4, z);
+      scene.add(wallLight);
+      const strip = addBox(new THREE.Vector3(0.08, 1.9, 0.28), new THREE.Vector3(side * (width / 2 - 0.32), 3.4, z), materials.glass);
+      strip.rotation.y = Math.PI / 2;
+    }
+  });
 
   for (let i = 0; i < roomNumber + 2; i += 1) {
     const crate = addBox(
