@@ -806,6 +806,119 @@ h2 {
   width: 58px;
 }
 
+.aliens-card .game-art {
+  background:
+    radial-gradient(circle at 75% 18%, rgba(103, 232, 249, 0.7) 0 34px, transparent 35px),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.08) 0 2px, transparent 2px 44px),
+    linear-gradient(180deg, #07111f 0%, #182235 58%, #050812 58% 100%);
+}
+
+.alien-room {
+  background: linear-gradient(135deg, #334155, #0f172a);
+  border: 5px solid #64748b;
+  bottom: 42px;
+  height: 122px;
+  left: 34px;
+  position: absolute;
+  transform: skewX(-10deg);
+  width: 260px;
+}
+
+.alien-door {
+  background: rgba(34, 211, 238, 0.32);
+  border: 5px solid #22d3ee;
+  bottom: 78px;
+  box-shadow: 0 0 28px rgba(34, 211, 238, 0.8);
+  height: 86px;
+  position: absolute;
+  right: 54px;
+  width: 58px;
+}
+
+.alien-player {
+  background: #3b82f6;
+  border: 4px solid #bfdbfe;
+  border-radius: 8px;
+  bottom: 72px;
+  height: 62px;
+  left: 82px;
+  position: absolute;
+  width: 38px;
+}
+
+.alien-player::before,
+.alien-enemy::before {
+  background: #22c55e;
+  border-radius: 999px 999px 8px 8px;
+  content: "";
+  height: 34px;
+  left: -2px;
+  position: absolute;
+  top: -38px;
+  width: 34px;
+}
+
+.alien-enemy {
+  background: #475569;
+  border: 4px solid #22c55e;
+  border-radius: 8px;
+  bottom: 78px;
+  height: 56px;
+  position: absolute;
+  width: 36px;
+}
+
+.alien-enemy-one {
+  right: 114px;
+}
+
+.alien-enemy-two {
+  right: 176px;
+  transform: scale(0.86);
+}
+
+.alien-shot {
+  background: #67e8f9;
+  border-radius: 999px;
+  box-shadow: 0 0 18px rgba(103, 232, 249, 0.95);
+  height: 8px;
+  position: absolute;
+  width: 62px;
+}
+
+.alien-shot-one {
+  bottom: 118px;
+  left: 128px;
+  transform: rotate(-8deg);
+}
+
+.alien-shot-two {
+  background: #a78bfa;
+  bottom: 142px;
+  right: 176px;
+  transform: rotate(16deg);
+}
+
+.alien-blue-chest,
+.alien-red-chest {
+  border: 4px solid #e0f2fe;
+  border-radius: 8px;
+  bottom: 58px;
+  height: 38px;
+  position: absolute;
+  width: 54px;
+}
+
+.alien-blue-chest {
+  background: #0ea5e9;
+  left: 154px;
+}
+
+.alien-red-chest {
+  background: #dc2626;
+  right: 34px;
+}
+
 .game-info {
   display: grid;
   gap: 12px;

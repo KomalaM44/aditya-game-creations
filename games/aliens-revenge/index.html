@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Aliens Revenge</title>
+  </head>
+  <body>
+    <canvas id="game"></canvas>
+
+    <div id="start-screen" class="overlay">
+      <div class="panel">
+        <p class="kicker">3D alien room shooter</p>
+        <h1>The Aliens Revenge</h1>
+        <p>Spawn with alien armor, a ray gun, alien shotgun, and laser cannon. Fight through rooms, open chests, and survive the commanders.</p>
+        <button id="start-button">Start Mission</button>
+      </div>
+    </div>
+
+    <div id="game-over" class="overlay hidden">
+      <div class="panel">
+        <p id="end-kicker" class="kicker">Mission ended</p>
+        <h2 id="end-title">Aliens won</h2>
+        <p id="end-copy">Try again with better chest upgrades.</p>
+        <button id="restart-button">Restart</button>
+      </div>
+    </div>
+
+    <div id="hud" class="hud hidden">
+      <div class="stats">
+        <span>Health <strong id="health">100</strong></span>
+        <span>Armor <strong id="armor">Alien</strong></span>
+        <span>Room <strong id="room">1</strong></span>
+        <span>Enemies <strong id="enemies">0</strong></span>
+        <span>Weapon <strong id="weapon">Ray Gun</strong></span>
+      </div>
+      <div id="message" class="message">WASD move, mouse look, click shoot, E open chests, 1-5 switch weapons.</div>
+    </div>
+
+    <div id="hotbar" class="hotbar hidden">
+      <button class="slot active" data-weapon="rayGun">1 Ray Gun</button>
+      <button class="slot" data-weapon="alienShotgun">2 Alien Shotgun</button>
+      <button class="slot" data-weapon="laserCannon">3 Laser Cannon</button>
+      <button class="slot locked" data-weapon="laserSword">4 Laser Sword</button>
+      <button class="slot locked" data-weapon="ultraWeapon">5 Ultra Weapon</button>
+    </div>
+
+    <div id="crosshair" class="crosshair hidden"></div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

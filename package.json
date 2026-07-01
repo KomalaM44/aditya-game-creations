@@ -6,14 +6,15 @@
     "games/*"
   ],
   "scripts": {
-    "build": "npm run build --workspace aditya-base-survival && npm run build --workspace build-your-space-shuttle && npm run build --workspace cozy-watchtower-survival && npm run build --workspace geometry-run && npm run build --workspace obby-123 && npm run build --workspace forest-camp-survival",
+    "build": "npm run build --workspace aditya-base-survival && npm run build --workspace build-your-space-shuttle && npm run build --workspace cozy-watchtower-survival && npm run build --workspace geometry-run && npm run build --workspace obby-123 && npm run build --workspace forest-camp-survival && npm run build --workspace aliens-revenge",
     "preview:site": "vite docs --host 127.0.0.1",
     "dev:base": "npm run dev --workspace aditya-base-survival",
     "dev:shuttle": "npm run dev --workspace build-your-space-shuttle",
     "dev:cozy": "npm run dev --workspace cozy-watchtower-survival",
     "dev:geometry": "npm run dev --workspace geometry-run",
     "dev:obby": "npm run dev --workspace obby-123",
-    "dev:forest": "npm run dev --workspace forest-camp-survival"
+    "dev:forest": "npm run dev --workspace forest-camp-survival",
+    "dev:aliens": "npm run dev --workspace aliens-revenge"
   },
   "dependencies": {
     "three": "^0.177.0"
