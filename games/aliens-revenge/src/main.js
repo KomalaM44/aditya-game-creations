@@ -76,10 +76,10 @@ const weaponStats = {
 };
 
 const enemyTypes = {
-  alien: { label: "Alien", hp: 70, speed: 2.0, damage: 10, weapon: "rayGun", color: 0x22c55e, cooldown: 1.2 },
-  scout: { label: "Alien Scout", hp: 55, speed: 3.1, damage: 18, weapon: "laserSword", color: 0x14b8a6, cooldown: 0.8 },
-  chief: { label: "Alien Chief", hp: 150, speed: 1.55, damage: 24, weapon: "laserCannon", color: 0x7c3aed, cooldown: 1.9 },
-  commander: { label: "Alien Commander", hp: 190, speed: 1.8, damage: 17, weapon: "alienShotgun", color: 0xbe123c, cooldown: 1.35 },
+  alien: { label: "Alien", hp: 70, speed: 2.0, damage: 6, weapon: "rayGun", color: 0x22c55e, cooldown: 1.2 },
+  scout: { label: "Alien Scout", hp: 55, speed: 3.1, damage: 10, weapon: "laserSword", color: 0x14b8a6, cooldown: 0.8 },
+  chief: { label: "Alien Chief", hp: 150, speed: 1.55, damage: 14, weapon: "laserCannon", color: 0x7c3aed, cooldown: 1.9 },
+  commander: { label: "Alien Commander", hp: 190, speed: 1.8, damage: 10, weapon: "alienShotgun", color: 0xbe123c, cooldown: 1.35 },
 };
 
 const materials = {};
